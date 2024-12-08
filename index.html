@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Object Detection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        h1 {
+            color: #333;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+        }
+        .file-input {
+            margin: 20px 0;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        label {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        label:hover {
+            background-color: #0056b3;
+        }
+        .preview {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .preview img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .results {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Object Detection UI</h1>
+    <div class="container">
+        <form id="uploadForm">
+            <div class="file-input">
+                <label for="imageInput">Choose Image</label>
+                <input type="file" id="imageInput" name="images" accept="image/*" required>
+            </div>
+            <div class="preview">
+                <p>No image selected</p>
+                <img id="previewImg" style="display:none;">
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+        <div class="results">
+            <p id="jsonLink" style="display: none;"><a href="#" download>Download JSON Result</a></p>
+            <p id="imageLink" style="display: none;"><a href="#" download>Download Processed Image</a></p>
+        </div>
+    </div>
+
+    <script>
+        const imageInput = document.getElementById('imageInput');
+        const previewImg = document.getElementById('previewImg');
+        const previewText = document.querySelector('.preview p');
+        const uploadForm = document.getElementById('uploadForm');
+        const jsonLink = document.getElementById('jsonLink');
+        const imageLink = document.getElementById('imageLink');
+
+        // Preview selected image
+        imageInput.addEventListener('change', () => {
+            const file = imageInput.files[0];
+            if (file) {
+                previewImg.src = URL.createObjectURL(file);
+                previewImg.style.display = 'block';
+                previewText.style.display = 'none';
+            }
+        });
+
+        // Submit form
+        uploadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(uploadForm);
+            try {
+                // Send image to API
+                const response = await fetch('/detections', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+
+                if (response.ok) {
+                    // Handle JSON response
+                    const jsonBlob = new Blob([JSON.stringify(result, null, 2)], { type: 'application/json' });
+                    const jsonUrl = URL.createObjectURL(jsonBlob);
+                    const jsonAnchor = jsonLink.querySelector('a');
+                    jsonAnchor.href = jsonUrl;
+                    jsonAnchor.download = 'result.json';
+                    jsonLink.style.display = 'block';
+
+                    // Handle image output
+                    const imageResponse = await fetch('/image', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const imageBlob = await imageResponse.blob();
+                    const imageUrl = URL.createObjectURL(imageBlob);
+                    const imageAnchor = imageLink.querySelector('a');
+                    imageAnchor.href = imageUrl;
+                    imageAnchor.download = 'processed_image.png';
+                    imageLink.style.display = 'block';
+                } else {
+                    alert('Error: Unable to process image.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html>
