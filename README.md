@@ -23,16 +23,19 @@ Activate the newly created Conda environment for this project:
 
 conda activate yolov3-gpu
 
-3. Load Weights
+3.Downloading official yolov3 pretrained weights on coco dataset
+("https://pjreddie.com/media/files/yolov3.weights")
+
+4. Load Weights
 To perform inference or training, the model requires weights to be loaded. This can be done by running the following script:
 
 python load_weights.py
 This script will load the pre-trained weights into the model, preparing it for object detection tasks.
 
-4. Run the Application
+5. Run the Application
 Finally, you can run the application (Flask server) using the following command:
 
-5.python app.py
+6.python app.py
 This will start a Flask application on port 5000. You can now access the object detection API via http://localhost:5000.
 
 
@@ -59,7 +62,7 @@ This function processes the target data to match the output of the YOLOv3 model,
 def transform_targets_for_output(y_true, grid_size, anchor_idxs):
     # (implementation details)
 
-    
+
 Custom Model Definition
 The YOLOv3 model is built with a custom architecture using Darknet-based convolutional layers:
 def DarknetConv(x, filters, size, strides=1, batch_norm=True):
