@@ -40,6 +40,8 @@ Downloading official yolov3 pretrained weights on coco dataset
 
 ("https://pjreddie.com/media/files/yolov3.weights")
 
+after downloading place the weights file inside weights folder
+
 
 
 Load Weights
