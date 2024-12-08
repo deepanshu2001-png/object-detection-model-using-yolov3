@@ -23,16 +23,19 @@ Activate the newly created Conda environment for this project:
 
 conda activate yolov3-gpu
 
-3. Load Weights
+3.Downloading official yolov3 pretrained weights on coco dataset
+("https://pjreddie.com/media/files/yolov3.weights")
+
+4. Load Weights
 To perform inference or training, the model requires weights to be loaded. This can be done by running the following script:
 
 python load_weights.py
 This script will load the pre-trained weights into the model, preparing it for object detection tasks.
 
-4. Run the Application
+5. Run the Application
 Finally, you can run the application (Flask server) using the following command:
 
-5.python app.py
+6.python app.py
 This will start a Flask application on port 5000. You can now access the object detection API via http://localhost:5000.
 
 
